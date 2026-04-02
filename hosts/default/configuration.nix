@@ -4,13 +4,8 @@ let
     set -euo pipefail
 
     if ${pkgs.systemd}/bin/systemd-detect-virt -q; then
-      # VM-only workarounds for Hyprland on virtio/mesa in QEMU.
-      export AQ_DRM_DEVICES=/dev/dri/card1
-      export MESA_LOADER_DRIVER_OVERRIDE=llvmpipe
-      export GALLIUM_DRIVER=llvmpipe
-      export WLR_RENDERER_ALLOW_SOFTWARE=1
-      export LIBGL_ALWAYS_SOFTWARE=1
-      export WLR_NO_HARDWARE_CURSORS=1
+      # In VMs, keep a compositor fallback but avoid forcing software rendering,
+      # which can crash mesa/llvmpipe on some virtio setups.
       exec ${pkgs.bash}/bin/bash -lc 'exec dbus-run-session sh -lc "Hyprland || exec sway"'
     fi
 
