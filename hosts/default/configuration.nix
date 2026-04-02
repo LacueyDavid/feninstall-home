@@ -1,5 +1,21 @@
 { pkgs, ... }:
 {
+  # Ensure stage-1 can see the virtual disk and open the LUKS container
+  # before mounting / from /dev/mapper/crypted.
+  boot.initrd.availableKernelModules = [
+    "virtio_pci"
+    "virtio_blk"
+    "virtio_scsi"
+    "ahci"
+    "sd_mod"
+  ];
+
+  boot.initrd.luks.devices."crypted" = {
+    device = "/dev/disk/by-partlabel/disk-main-luks";
+    preLVM = true;
+    allowDiscards = true;
+  };
+
   # Keep disk/boot definitions aligned with the bootstrap disko layout.
   fileSystems."/" = {
     device = "/dev/mapper/crypted";
