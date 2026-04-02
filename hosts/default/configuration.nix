@@ -36,6 +36,9 @@
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   nixpkgs.config.allowUnfree = true;
 
+  # Explicitly enable graphics userspace required by Wayland compositors.
+  hardware.graphics.enable = true;
+
   networking.networkmanager.enable = true;
 
   services.xserver.enable = false;

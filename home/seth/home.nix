@@ -28,6 +28,12 @@
         "mako"
       ];
 
+      env = [
+        "WLR_RENDERER_ALLOW_SOFTWARE,1"
+        "LIBGL_ALWAYS_SOFTWARE,1"
+        "WLR_NO_HARDWARE_CURSORS,1"
+      ];
+
       input = {
         kb_layout = "fr";
         follow_mouse = 1;
