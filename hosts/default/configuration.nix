@@ -45,7 +45,7 @@
   services.greetd = {
     enable = true;
     settings.default_session = {
-      command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd 'dbus-run-session Hyprland'";
+      command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd 'dbus-run-session sh -lc \"Hyprland || exec sway\"'";
       user = "greeter";
     };
   };
@@ -54,6 +54,8 @@
     enable = true;
     xwayland.enable = true;
   };
+
+  programs.sway.enable = true;
 
   xdg.portal = {
     enable = true;
