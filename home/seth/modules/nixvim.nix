@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 {
   programs.nixvim = {
     enable = true;
@@ -100,8 +100,32 @@
 
       treesitter = {
         enable = true;
+        grammarPackages = with pkgs.vimPlugins.nvim-treesitter.builtGrammars; [
+          bash
+          c
+          cpp
+          css
+          dockerfile
+          html
+          javascript
+          json
+          lua
+          markdown
+          markdown_inline
+          nix
+          python
+          query
+          regex
+          rust
+          toml
+          tsx
+          typescript
+          vim
+          vimdoc
+          yaml
+        ];
         settings = {
-          auto_install = true;
+          auto_install = false;
           highlight.enable = true;
           indent.enable = true;
         };

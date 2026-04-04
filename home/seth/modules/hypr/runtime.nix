@@ -40,6 +40,7 @@ in
     general {
       lock_cmd = $lock_cmd
       before_sleep_cmd = loginctl lock-session
+      after_sleep_cmd = ${hyprctlBin} dispatch global quickshell:lockFocus
       inhibit_sleep = 3
     }
 

@@ -1,4 +1,4 @@
-{ config, inputs, pkgs, ... }:
+{ config, pkgs, ... }:
 let
   iiConfig = pkgs.writeText "illogical-impulse-config.json" (
     builtins.replaceStrings
@@ -145,7 +145,7 @@ in {
     '';
   };
 
-  xdg.configFile."quickshell/ii".source = "${inputs.dots-hyprland}/dots/.config/quickshell/ii";
+  xdg.configFile."quickshell/ii".source = ./live/quickshell/ii;
   xdg.configFile."illogical-impulse/config.json".source = iiConfig;
 
   programs.wofi = {
@@ -208,20 +208,28 @@ in {
   };
 
   home.packages = with pkgs; [
+    bc
     brightnessctl
     cliphist
+    curl
+    easyeffects
+    fuzzel
     grim
     hypridle
     hyprlock
     hyprpicker
     hyprpaper
+    hyprshot
     pavucontrol
     playerctl
     quickshell
     slurp
+    tesseract
     waybar
     wl-clipboard
     wl-clip-persist
+    wlogout
     wofi
+    wtype
   ];
 }
