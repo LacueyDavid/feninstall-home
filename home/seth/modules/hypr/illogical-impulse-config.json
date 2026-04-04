@@ -59,8 +59,8 @@
     "networkEthernet": "kcmshell6 kcm_networkmanagement",
     "taskManager": "plasma-systemmonitor --page-name Processes",
     "terminal": "kitty -1",
-    "update": "kitty -1 --hold=yes sh -lc \"sudo nixos-rebuild switch --flake /etc/nixos#pc\"",
-    "volumeMixer": "pavucontrol"
+    "update": "kitty -1 --hold=yes fish -i -c 'pkexec pacman -Syu'",
+    "volumeMixer": "~/.config/hypr/hyprland/scripts/launch_first_available.sh \"pavucontrol-qt\" \"pavucontrol\""
   },
   "audio": {
     "protection": {

@@ -223,6 +223,9 @@ in {
     pavucontrol
     playerctl
     quickshell
+    qt6.qt5compat
+    qt6.qtdeclarative
+    qt6.qtsvg
     slurp
     tesseract
     waybar
