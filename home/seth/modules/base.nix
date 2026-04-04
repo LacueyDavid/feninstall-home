@@ -98,14 +98,52 @@
       grep = "rg";
       nrs = "sudo nixos-rebuild switch --flake /etc/nixos#default";
       nrt = "sudo nixos-rebuild test --flake /etc/nixos#default";
-      fenos-switch = "sudo nixos-rebuild switch --flake /home/seth/work/nixos-project/feninstall-home#pc";
-      fenos-test = "sudo nixos-rebuild test --flake /home/seth/work/nixos-project/feninstall-home#pc";
-      fss = "sudo nixos-rebuild switch --flake /home/seth/work/nixos-project/feninstall-home#pc";
-      fst = "sudo nixos-rebuild test --flake /home/seth/work/nixos-project/feninstall-home#pc";
-      switch = "sudo nixos-rebuild switch --flake /home/seth/work/nixos-project/feninstall-home#pc";
+      fenos-switch = "fenos_switch";
+      fenos-test = "fenos_test";
+      fss = "fenos_switch";
+      fst = "fenos_test";
+      switch = "fenos_switch";
     };
 
     initContent = ''
+      fenos_flake_path() {
+        local candidates
+        candidates=(
+          "''${FENOS_FLAKE_PATH:-}"
+          "/etc/nixos"
+          "$HOME/work/nixos-project/feninstall-home"
+          "$HOME/nixos-project/feninstall-home"
+        )
+
+        local p
+        for p in "''${candidates[@]}"; do
+          if [[ -n "$p" && -f "$p/flake.nix" ]]; then
+            printf "%s" "$p"
+            return 0
+          fi
+        done
+
+        return 1
+      }
+
+      fenos_switch() {
+        local flake
+        flake="$(fenos_flake_path)" || {
+          echo "fenos: unable to locate flake. Set FENOS_FLAKE_PATH first."
+          return 1
+        }
+        sudo nixos-rebuild switch --flake "$flake#pc"
+      }
+
+      fenos_test() {
+        local flake
+        flake="$(fenos_flake_path)" || {
+          echo "fenos: unable to locate flake. Set FENOS_FLAKE_PATH first."
+          return 1
+        }
+        sudo nixos-rebuild test --flake "$flake#pc"
+      }
+
       bindkey '^[[1;5C' forward-word
       bindkey '^[[1;5D' backward-word
       bindkey '^H' backward-kill-word
