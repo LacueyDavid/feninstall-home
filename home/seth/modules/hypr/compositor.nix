@@ -35,12 +35,6 @@
         touchpad.scroll_factor = 0.7;
       };
 
-      gesture = [
-        "3, swipe, move,"
-        "3, pinch, float"
-        "4, horizontal, workspace"
-      ];
-
       gestures = {
         workspace_swipe_distance = 700;
         workspace_swipe_cancel_ratio = 0.2;

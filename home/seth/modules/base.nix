@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 {
   xdg.enable = true;
 
@@ -10,25 +10,29 @@
     NIXOS_OZONE_WL = "1";
   };
 
+  programs.delta = {
+    enable = true;
+    enableGitIntegration = true;
+  };
+
   programs.git = {
     enable = true;
-    userName = "seth";
-    userEmail = "seth@example.com";
     lfs.enable = true;
-    delta.enable = true;
-    extraConfig = {
+    settings = {
+      user.name = "seth";
+      user.email = "seth@example.com";
       init.defaultBranch = "main";
       pull.rebase = true;
       rebase.autoStash = true;
       rerere.enabled = true;
       core.editor = "nvim";
-    };
-    aliases = {
-      s = "status -sb";
-      c = "commit";
-      a = "add";
-      sw = "switch";
-      tree = "log --graph --abbrev-commit --decorate --oneline --all";
+      alias = {
+        s = "status -sb";
+        c = "commit";
+        a = "add";
+        sw = "switch";
+        tree = "log --graph --abbrev-commit --decorate --oneline --all";
+      };
     };
     ignores = [
       ".DS_Store"
@@ -77,6 +81,7 @@
 
   programs.zsh = {
     enable = true;
+    dotDir = config.home.homeDirectory;
     enableCompletion = true;
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
@@ -160,7 +165,7 @@
     lua-language-server
     nil
     nixd
-    nodePackages.prettier
+    prettier
     ripgrep
     ruff
     shellcheck
