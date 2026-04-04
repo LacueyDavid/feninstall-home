@@ -68,23 +68,32 @@
     nix-direnv.enable = true;
   };
 
-  programs.starship = {
-    enable = true;
-    settings = {
-      add_newline = false;
-      character = {
-        success_symbol = "[>](bold green)";
-        error_symbol = "[>](bold red)";
-      };
-    };
-  };
-
   programs.zsh = {
     enable = true;
     dotDir = config.home.homeDirectory;
     enableCompletion = true;
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
+
+    sessionVariables = {
+      ZSH_AUTOSUGGEST_USE_ASYNC = true;
+      ZSH_AUTOSUGGEST_MANUAL_REBIND = true;
+      ZSH_AUTOSUGGEST_STRATEGY = [ "history" "completion" ];
+      ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE = "fg=#8b545d,bold";
+    };
+
+    plugins = [
+      {
+        name = "powerlevel10k";
+        src = pkgs.zsh-powerlevel10k;
+        file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
+      }
+      {
+        name = "fzf-tab";
+        src = pkgs.zsh-fzf-tab;
+        file = "share/fzf-tab/fzf-tab.plugin.zsh";
+      }
+    ];
 
     history = {
       save = 50000;
@@ -96,11 +105,28 @@
 
     shellAliases = {
       v = "nvim";
-      ls = "eza --group-directories-first";
-      ll = "eza -lah --git --group-directories-first";
+      l = "eza --group-directories-first --icons=auto";
+      ls = "l";
+      ll = "l -lah --git";
+      la = "l -a";
+      lal = "l -la";
       lt = "eza --tree --level=2 --git-ignore";
       cat = "bat";
       grep = "rg";
+      cd = "cdls";
+      gdu = "gdu -c";
+      make = "bear -- make";
+      valgrind = "valgrind --leak-check=full --show-leak-kinds=all -s";
+      gcl = "git clone";
+      gitconf = "git config --global --edit";
+      edit = "sudoedit";
+      nixconf = "cd /etc/nixos && sudo su";
+      pixel = "xcolor";
+      see = "mupdf";
+      t = "tmux";
+      gotop = "btop";
+      colist = "nmcli dev wifi list";
+      coto = "nmcli dev wifi connect";
       nrs = "sudo nixos-rebuild switch --flake /etc/nixos#default";
       nrt = "sudo nixos-rebuild test --flake /etc/nixos#default";
       fenos-switch = "fenos_switch";
@@ -108,9 +134,20 @@
       fss = "fenos_switch";
       fst = "fenos_test";
       switch = "fenos_switch";
+      upower = "sudo upower -i /org/freedesktop/UPower/devices/battery_BAT0";
+      ssh = "TERM=xterm-kitty ssh";
     };
 
     initContent = ''
+      cdls() {
+        if [[ -n "$1" ]]; then
+          cd "$1"
+        else
+          cd
+        fi
+        eza --group-directories-first --icons=auto
+      }
+
       fenos_flake_path() {
         local candidates
         candidates=(
@@ -149,6 +186,28 @@
         sudo nixos-rebuild test --flake "$flake#pc"
       }
 
+      sudo-command-line() {
+        [[ -z $BUFFER ]] && zle up-history
+        if [[ $BUFFER != sudo\ * ]]; then
+          BUFFER="sudo $BUFFER"
+          CURSOR=$(( CURSOR + 5 ))
+        fi
+      }
+      zle -N sudo-command-line
+      bindkey '^s' sudo-command-line
+
+      # Disable flow control so Ctrl+S works for zsh widgets.
+      stty -ixon
+
+      if [[ -r "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh" ]]; then
+        source "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh"
+      fi
+
+      [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+      bindkey -e
+      bindkey -s '^[e' 'v\n'
+
       bindkey '^[[1;5C' forward-word
       bindkey '^[[1;5D' backward-word
       bindkey '^H' backward-kill-word
@@ -158,22 +217,30 @@
   home.packages = with pkgs; [
     alejandra
     bash-language-server
+    bear
+    btop
     clang-tools
     fd
     gh
     jq
+    mupdf
     lua-language-server
     nil
     nixd
+    norminette
     prettier
     ripgrep
     ruff
     shellcheck
     shfmt
     stylua
+    tmux
     tree
     unzip
+    upower
+    valgrind
     wget
+    xcolor
     zip
   ];
 }
