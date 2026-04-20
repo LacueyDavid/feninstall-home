@@ -68,6 +68,8 @@
     nix-direnv.enable = true;
   };
 
+  programs.firefox = { enable = true;};
+
   programs.zsh = {
     enable = true;
     dotDir = config.home.homeDirectory;
@@ -242,5 +244,7 @@
     wget
     xcolor
     zip
+    telegram-desktop
+    vscode
   ];
 }

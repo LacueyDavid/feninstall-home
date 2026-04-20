@@ -1,21 +1,5 @@
 {
   "nodes": {
-    "dots-hyprland": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1775242237,
-        "narHash": "sha256-rd/w2xGC2K9AzDTCyuW4xVMmSUICD7P4MlJ/nfknSW4=",
-        "owner": "end-4",
-        "repo": "dots-hyprland",
-        "rev": "799bfae18463a2513b8ecee1adb0d99f22d77073",
-        "type": "github"
-      },
-      "original": {
-        "owner": "end-4",
-        "repo": "dots-hyprland",
-        "type": "github"
-      }
-    },
     "flake-parts": {
       "inputs": {
         "nixpkgs-lib": [
@@ -54,6 +38,23 @@
       "original": {
         "owner": "nix-community",
         "repo": "home-manager",
+        "type": "github"
+      }
+    },
+    "illogical-impulse-dotfiles": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1755087685,
+        "narHash": "sha256-l3U/aTwHGxdZgGfs6m8w8keJMTmngZ/aTV0i/5soZVQ=",
+        "owner": "xBLACKICEx",
+        "repo": "dots-hyprland",
+        "rev": "ef1e161c230a6aef92b981aa9066ce21a255da66",
+        "type": "github"
+      },
+      "original": {
+        "owner": "xBLACKICEx",
+        "ref": "tmp",
+        "repo": "dots-hyprland",
         "type": "github"
       }
     },
@@ -97,8 +98,8 @@
     },
     "root": {
       "inputs": {
-        "dots-hyprland": "dots-hyprland",
         "home-manager": "home-manager",
+        "illogical-impulse-dotfiles": "illogical-impulse-dotfiles",
         "nixpkgs": "nixpkgs",
         "nixvim": "nixvim"
       }

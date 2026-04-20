@@ -74,6 +74,10 @@ in {
 
   # Keep broad Wi-Fi firmware support on the fully configured installed system.
   hardware.enableRedistributableFirmware = true;
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = true;
+  };
 
   # Explicitly enable graphics userspace required by Wayland compositors.
   hardware.graphics.enable = true;
@@ -127,6 +131,8 @@ in {
     pulse.enable = true;
     jack.enable = true;
   };
+
+  services.upower.enable = true;
 
   services.fwupd.enable = true;
 

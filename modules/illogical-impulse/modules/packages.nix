@@ -61,10 +61,16 @@ in
       wl-clipboard
 
       # # KDE #
+      kdePackages.dolphin
       kdePackages.bluedevil
+      bluez
+      blueman
+      kdePackages.kcmutils
+      kdePackages.systemsettings
       gnome-keyring
       # networkmanager # normal handel with nixos services
       kdePackages.plasma-nm
+      networkmanagerapplet
       kdePackages.polkit-kde-agent-1
 
       # # SCREEN CAPUTUER #
@@ -105,7 +111,7 @@ in
 
       # # WIDGETS #
       glib
-      swww
+      awww
       translate-shell
       wlogout
 

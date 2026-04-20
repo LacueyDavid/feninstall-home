@@ -21,12 +21,15 @@ get_light_dark() {
 apply_qt() {
 	# Check if the theme exists
 	FOLDER_PATH="$XDG_CONFIG_HOME/Kvantum/Colloid/"
+	MATERIAL_PATH="$XDG_CONFIG_HOME/Kvantum/MaterialAdw/"
 
 	if [ ! -d "$FOLDER_PATH" ]; then
 		# Send a notification
 		notify-send "Colloid-kde theme required" " The folder '$FOLDER_PATH' does not exist."
 		exit 1 # Exit the function if the folder does not exist
 	fi
+
+	mkdir -p "$MATERIAL_PATH"
 
 	lightdark=$(get_light_dark)
 	if [ "$lightdark" = "light" ]; then

@@ -284,6 +284,12 @@ Item { // Bar content region
                             color: rightSidebarButton.colText
                         }
                     }
+                    MaterialSymbol {
+                        Layout.rightMargin: indicatorsRowLayout.realSpacing
+                        text: (Audio.sink?.audio?.muted ?? false) ? "volume_off" : ((Audio.value ?? 0) < 0.34 ? "volume_down" : "volume_up")
+                        iconSize: Appearance.font.pixelSize.larger
+                        color: rightSidebarButton.colText
+                    }
                     HyprlandXkbIndicator {
                         Layout.alignment: Qt.AlignVCenter
                         Layout.rightMargin: indicatorsRowLayout.realSpacing

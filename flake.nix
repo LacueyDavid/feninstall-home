@@ -11,8 +11,8 @@
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    dots-hyprland = {
-      url = "github:end-4/dots-hyprland";
+    illogical-impulse-dotfiles = {
+      url = "github:xBLACKICEx/dots-hyprland?ref=tmp";
       flake = false;
     };
   };

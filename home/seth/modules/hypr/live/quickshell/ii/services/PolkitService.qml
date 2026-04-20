@@ -3,13 +3,20 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
-import Quickshell.Services.Polkit
 
 Singleton {
     id: root
-    property alias agent: polkitAgent
-    property alias active: polkitAgent.isActive
-    property alias flow: polkitAgent.flow
+    // Fallback implementation for environments where Quickshell.Services.Polkit
+    // is not available in the installed quickshell build.
+    property bool active: false
+    property var flow: QtObject {
+        property string message: ""
+        property string inputPrompt: ""
+        property bool responseVisible: false
+        property string iconName: ""
+        function cancelAuthenticationRequest() {}
+        function submit(_input) {}
+    }
     property bool interactionAvailable: false
     property string cleanMessage: {
         if (!root.flow) return "";
@@ -26,24 +33,11 @@ Singleton {
 
     function cancel() {
         root.flow.cancelAuthenticationRequest()
+        root.interactionAvailable = false
     }
 
     function submit(string) {
         root.flow.submit(string)
         root.interactionAvailable = false
-    }
-
-    Connections {
-        target: root.flow
-        function onAuthenticationFailed() {
-            root.interactionAvailable = true;
-        }
-    }
-
-    PolkitAgent {
-        id: polkitAgent
-        onAuthenticationRequestStarted: {
-            root.interactionAvailable = true;
-        }
     }
 }
