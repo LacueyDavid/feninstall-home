@@ -1,0 +1,33 @@
+{ pkgs, ... }:
+{
+  home.packages = with pkgs; [
+    alejandra
+    bash-language-server
+    bear
+    btop
+    clang-tools
+    claude-code
+    fd
+    gh
+    jq
+    lua-language-server
+    nil
+    nixd
+    nodejs_22
+    norminette
+    prettier
+    ripgrep
+    ruff
+    shellcheck
+    shfmt
+    stylua
+    tmux
+    tree
+    unzip
+    upower
+    valgrind
+    wget
+    xcolor
+    zip
+  ];
+}

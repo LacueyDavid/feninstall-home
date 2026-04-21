@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//nix/store/xxnqdymryanbgdvcpi0zwp16nwxrswg9-nixos-system-nixos-26.05.20260401.6201e20/**)",
+      "Read(//nix/store/**)",
+      "Bash(grep -v \"^.$\")",
+      "Read(//etc/**)",
+      "Bash(systemctl cat *)",
+      "Bash(objdump -d /nix/store/8jz5m1fjjl44mz186yddgl7qbakm15r0-hyprland-0.54.3/bin/start-hyprland)",
+      "Bash(nm /nix/store/8jz5m1fjjl44mz186yddgl7qbakm15r0-hyprland-0.54.3/bin/start-hyprland)",
+      "Bash(nm -D /nix/store/8jz5m1fjjl44mz186yddgl7qbakm15r0-hyprland-0.54.3/bin/start-hyprland)",
+      "Bash(readelf -d /nix/store/8jz5m1fjjl44mz186yddgl7qbakm15r0-hyprland-0.54.3/bin/start-hyprland)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); nodes=d.get\\('nodes',{}\\); [print\\(k,'->',v.get\\('locked',{}\\).get\\('url',''\\) or v.get\\('locked',{}\\).get\\('rev',''\\)[:12] if v.get\\('locked'\\) else ''\\) for k,v in nodes.items\\(\\) if 'hyprland' in k.lower\\(\\) or k == 'nixpkgs']\")",
+      "Bash(timeout 2 /nix/store/8jz5m1fjjl44mz186yddgl7qbakm15r0-hyprland-0.54.3/bin/start-hyprland --help)",
+      "Bash(hyprctl version *)",
+      "Bash(awk '{print $2}')",
+      "Bash(xargs -I{} cat /proc/{}/status)",
+      "Bash(pstree -p 11732)",
+      "Bash(nix flake *)",
+      "Bash(git add *)",
+      "Bash(nixos-rebuild build *)"
+    ]
+  }
+}

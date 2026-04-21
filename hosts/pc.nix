@@ -1,8 +1,5 @@
-{ ... }:
 {
-  imports = [
-    ../default/configuration.nix
-  ];
+  imports = [ ./default.nix ];
 
   system.autoUpgrade = {
     enable = true;

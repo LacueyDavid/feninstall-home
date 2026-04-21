@@ -1,7 +1,5 @@
 { config, pkgs, ... }:
 {
-  xdg.enable = true;
-
   home.sessionVariables = {
     EDITOR = "nvim";
     VISUAL = "nvim";
@@ -70,8 +68,6 @@
     enable = true;
     nix-direnv.enable = true;
   };
-
-  programs.firefox = { enable = true;};
 
   programs.zsh = {
     enable = true;
@@ -202,7 +198,6 @@
       zle -N sudo-command-line
       bindkey '^s' sudo-command-line
 
-      # Disable flow control so Ctrl+S works for zsh widgets.
       stty -ixon
 
       if [[ -r "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh" ]]; then
@@ -211,8 +206,7 @@
 
       [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-      # Load secrets (ANTHROPIC_API_KEY, etc.) from an untracked file.
-      # Create ~/.secrets/anthropic.env with: export ANTHROPIC_API_KEY=sk-ant-...
+      # Secrets: e.g. ~/.secrets/anthropic.env with `export ANTHROPIC_API_KEY=...`
       [[ -f ~/.secrets/anthropic.env ]] && source ~/.secrets/anthropic.env
 
       bindkey -e
@@ -223,38 +217,4 @@
       bindkey '^H' backward-kill-word
     '';
   };
-
-  home.packages = with pkgs; [
-    alejandra
-    bash-language-server
-    bear
-    btop
-    clang-tools
-    claude-code
-    fd
-    gh
-    jq
-    mupdf
-    lua-language-server
-    nil
-    nixd
-    norminette
-    prettier
-    ripgrep
-    ruff
-    shellcheck
-    shfmt
-    stylua
-    tmux
-    tree
-    unzip
-    upower
-    valgrind
-    wget
-    xcolor
-    zip
-    telegram-desktop
-    vscode
-    nodejs_22
-  ];
 }

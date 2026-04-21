@@ -14,52 +14,57 @@ This file is the long-term memory of this repository. Keep it accurate and conci
 ---
 
 ## Repository Structure
+
+See `ARCHITECTURE.md` at the repo root for the full layout and the reasoning.
+Short version:
+
 ```
 /etc/nixos/
-├── flake.nix                       # Inputs: nixpkgs (unstable), home-manager, nixvim
-├── hosts/
-│   ├── default/configuration.nix   # Base: hardware, LUKS+LVM boot, services
-│   └── pc/configuration.nix        # Profile: autoUpgrade, machine-specific
-├── home/seth/
-│   ├── home.nix                    # Entry point: imports all modules + CLAUDE.md deploy
-│   └── modules/
-│       ├── base.nix                # Packages, zsh, git, secrets sourcing
-│       ├── desktop.nix             # Wayland/Hyprland desktop services
-│       ├── kitty.nix               # Terminal emulator
-│       ├── nixvim.nix              # Neovim (nixvim), codecompanion, Claude CLI, LSP, cmp
-│       └── hypr/                   # Hyprland compositor config
-└── modules/illogical-impulse/      # External: quickshell UI shell (WaffleFamily / ii)
+├── flake.nix                 # Inputs + three outputs: pc / vm / default
+├── hosts/                    # One .nix per host — composes system modules
+├── modules/
+│   ├── system/               # NixOS modules (boot, network, audio, desktop, ...)
+│   ├── home/                 # Home-manager modules (shell, editor, hyprland, ...)
+│   └── illogical-impulse/    # Vendored third-party HM module (patched upstream dots)
+├── home/                     # Home-manager entry per user (seth.nix, root.nix)
+└── dotfiles/                 # Raw .conf / .qml files (consumed by home-manager)
 ```
+
+Rule of thumb:
+- `.nix` files describe *configuration* and live under `modules/` or `hosts/`.
+- Non-Nix configs (Hyprland .conf, Quickshell QML, scripts) live under `dotfiles/`.
+- `modules/` is composable (each file a single concern); `hosts/` picks a combo.
 
 ## Rebuild Commands
 ```bash
-switch                              # nixos-rebuild switch --flake /etc/nixos#pc
-nrt                                 # nixos-rebuild test  --flake /etc/nixos#pc  (no bootloader)
-nix flake check --no-build          # Validate Nix syntax (fast, run this first)
+fss                                     # fenos_switch → nixos-rebuild switch --flake /etc/nixos#pc
+fst                                     # fenos_test   → nixos-rebuild test   --flake /etc/nixos#pc
+nix flake check --no-build              # Validate Nix syntax (fast, run this first)
 sudo nixos-rebuild switch --show-trace  # Full stack trace for deep errors
 ```
-**Always prefer `nrt` before `switch`** — it's reversible, doesn't touch the bootloader.
+**Always prefer `fst` before `fss`** — test mode is reversible, doesn't touch the bootloader.
 
 ## Key Conventions
 - **Secrets**: never in the Nix store. API keys go in `~/.secrets/*.env` (chmod 600),
   sourced by zsh `initContent`. Pattern: `[[ -f ~/.secrets/foo.env ]] && source ~/.secrets/foo.env`
 - **Unfree packages**: allowed globally (`nixpkgs.config.allowUnfree = true`).
 - **nixvim**: Neovim is configured declaratively. Raw Lua goes in `extraConfigLua`.
-  home-manager is NixOS-integrated (not standalone) — changes to `home/seth/` need a full `switch`.
+  home-manager is NixOS-integrated (not standalone) — changes to `modules/home/` need a full `fss`.
 - **autoUpgrade**: the `pc` host auto-upgrades daily 03–05h.
   Check `journalctl -u nixos-upgrade.service` after any unexpected system change.
-- **Claude tools in Neovim**: codecompanion (`<leader>cc`) + Claude Code CLI (`<leader>cl`).
-  Model: `claude-opus-4-5`. Key loaded from `~/.secrets/anthropic.env`.
+- **Dotfile overrides vs upstream**: illogical-impulse ships a config bundle; we
+  override individual files in `modules/home/hyprland.nix` + `modules/home/quickshell.nix`
+  using `lib.mkForce`, pointing at our patched copies under `dotfiles/hypr/`.
 
 ## Hardware Context (pc host)
-- Boot: systemd-boot + LUKS full disk encryption (LVM: crypted--vg-{root,home,swap})
+- Boot: systemd-boot + LUKS full disk encryption (LVM: `crypted--vg-{root,home,swap}`)
 - Display: Wayland-only (no Xorg), Hyprland compositor
-- Login: greetd + tuigreet → `start-hyprland` script
+- Login: greetd + tuigreet → `dbus-run-session start-hyprland`
 - Locale: `fr_FR.UTF-8`, timezone `Europe/Paris`
 
 ## Debugging Workflow
 1. `nix flake check --no-build` — catches syntax before slow evaluation
-2. `nrt` — test mode, no bootloader write, safe to iterate
+2. `fst` — test mode, no bootloader write, safe to iterate
 3. `sudo nixos-rebuild switch --show-trace` — full trace for attribute errors
 4. `journalctl -b -p err` — boot-time errors
 5. `systemctl --failed` — failed services
@@ -74,6 +79,23 @@ sudo nixos-rebuild switch --show-trace  # Full stack trace for deep errors
 ---
 
 ## Known Pitfalls
+
+### Hyprland "not started with start-hyprland" warning
+**Symptom**: top-right notification on login: "hyprland was not started with start-hyprland, not recommended!"
+**Cause**: `start-hyprland`, when launched without a D-Bus session, does `exec dbus-run-session Hyprland` —
+  replacing itself. Hyprland's parent is then `dbus-run-session`, so its "started by start-hyprland" check fails.
+**Fix**: launch `start-hyprland` *inside* a D-Bus session: `dbus-run-session start-hyprland`.
+  See `modules/system/desktop.nix` → `sessionLauncher`.
+
+### Quickshell "Could not find 'default' config directory or shell.qml"
+**Symptom**: running `quickshell` (no `-c`) at a shell errors out.
+**Cause**: quickshell defaults to looking for a config dir named `default`; our upstream bundle only ships `ii`.
+**Fix**: `modules/home/quickshell.nix` links both `quickshell/ii` and `quickshell/default` to the same QML source.
+
+### `exec-once = qs ...` silently fails
+**Symptom**: quickshell never starts on Hyprland login.
+**Cause**: `qs` is a zsh alias, not a binary. Hyprland runs exec-once commands without a shell/alias context.
+**Fix**: call `quickshell -c ii` directly in `dotfiles/hypr/hyprland/execs.conf`.
 
 ### Lua empty-string comparison inside Nix heredoc
 **Symptom**: `syntax error, unexpected THEN` pointing at a `~=` in extraConfigLua
