@@ -18,7 +18,8 @@
       "Bash(pstree -p 11732)",
       "Bash(nix flake *)",
       "Bash(git add *)",
-      "Bash(nixos-rebuild build *)"
+      "Bash(nixos-rebuild build *)",
+      "Bash(nix --extra-experimental-features 'nix-command flakes' flake check --no-build)"
     ]
   }
 }
